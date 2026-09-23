@@ -12,13 +12,22 @@ export async function request(path: string, options?: RequestInit): Promise<unkn
       }
     });
   } catch {
-    throw new ApiError('Backend is unavailable. Check the API URL and that the server is running.', 'unavailable');
+    throw new ApiError('Сервер недоступен. Проверьте адрес API и работу сервера.', 'unavailable');
   }
   if (!response.ok) {
-    const body = await response.json().catch(() => null) as { detail?: unknown } | null;
-    const detail = typeof body?.detail === 'string' ? body.detail : undefined;
-    if (response.status >= 500) throw new ApiError(`Backend is unavailable or returned a server error (${response.status}).`, 'unavailable', response.status);
-    throw new ApiError(detail ?? `API request failed (${response.status}).`, 'http', response.status);
+    if (response.status >= 500) throw new ApiError(`Сервер недоступен или вернул ошибку (${response.status}).`, 'unavailable', response.status);
+    const message = path === '/demo/import-profile' && response.status === 409
+      ? 'Сотрудник с таким ID уже существует.'
+      : path === '/demo/import-profile' && response.status === 422
+        ? 'Некорректный профиль. Проверьте обязательные поля, навыки и историю.'
+        : response.status === 404
+          ? 'Запрошенные данные не найдены.'
+          : response.status === 409
+            ? 'Действие недоступно или уже выполнено.'
+            : response.status === 422
+              ? 'Запрос содержит некорректные данные.'
+              : `Не удалось выполнить запрос к API (${response.status}).`;
+    throw new ApiError(message, 'http', response.status);
   }
   if (response.status === 204) return undefined;
   const body = await response.text();
@@ -26,7 +35,7 @@ export async function request(path: string, options?: RequestInit): Promise<unkn
   try {
     return JSON.parse(body) as unknown;
   } catch {
-    throw new ApiError('API returned invalid JSON.', 'invalid');
+    throw new ApiError('Сервер вернул некорректный JSON.', 'invalid');
   }
 }
 const id = encodeURIComponent;
@@ -55,7 +64,7 @@ export async function importProfile(payload: unknown): Promise<{ employee_id: st
     body: JSON.stringify(payload)
   });
   if (!result || typeof result !== 'object' || typeof (result as { employee_id?: unknown }).employee_id !== 'string') {
-    throw new ApiError('Import response is missing employee_id.', 'invalid');
+    throw new ApiError('В ответе импорта отсутствует employee_id.', 'invalid');
   }
   return result as { employee_id: string };
 }

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
 import { SectionCard } from '../components/Ui';
 export function HrPlaceholder() {
-  return <div className="page-stack"><div className="hero"><span className="eyebrow">COMING LATER</span><h1>HR Dashboard</h1><p>HR analytics will appear here after its API contract is agreed.</p></div><SectionCard title="Under construction" eyebrow="FUTURE MODULE"><p className="muted">No HR analytics are available in the current API contract.</p><Link className="button button-secondary" to="/">Browse employees</Link></SectionCard></div>;
+  return <div className="page-stack"><div className="hero"><span className="eyebrow">СКОРО</span><h1>HR-панель</h1><p>HR-аналитика появится после согласования API.</p></div><SectionCard title="В разработке" eyebrow="БУДУЩИЙ РАЗДЕЛ"><p className="muted">HR-аналитика пока недоступна.</p><Link className="button button-secondary" to="/">К списку сотрудников</Link></SectionCard></div>;
 }

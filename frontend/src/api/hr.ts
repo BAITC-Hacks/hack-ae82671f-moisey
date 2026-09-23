@@ -3,7 +3,7 @@ import { ApiError } from './types';
 
 export const statusLabels = {
   completed: 'Завершено', in_progress: 'В процессе', no_show: 'Неявка',
-  declined: 'Отказ', dropped: 'Прекращено', overdue: 'Просрочено',
+  declined: 'Отказ', dropped: 'Прервано', overdue: 'Просрочено',
 } as const;
 export type ParticipationStatus = keyof typeof statusLabels;
 export interface HrOverview {

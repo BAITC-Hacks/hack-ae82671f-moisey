@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getHrOverview, statusLabels, type HrOverview, type ParticipationStatus } from '../api/hr';
 import { EmptyState, ErrorState, LoadingState } from '../components/States';
-import { SectionCard } from '../components/Ui';
+import { SectionCard, gradeLabel } from '../components/Ui';
 
 const reasonLabels = {
   no_next_grade: 'Следующий грейд не задан',
@@ -46,7 +46,7 @@ export function HrDashboard() {
         <option value="">Все отделы</option>{data?.filters.departments.map(item => <option key={item}>{item}</option>)}
       </select></label>
       <label htmlFor="hr-grade">Грейд<select id="hr-grade" aria-label="Грейд" value={grade} onChange={e => setGrade(e.target.value)}>
-        <option value="">Все грейды</option>{data?.filters.grades.map(item => <option key={item}>{item}</option>)}
+        <option value="">Все грейды</option>{data?.filters.grades.map(item => <option key={item} value={item}>{gradeLabel(item)}</option>)}
       </select></label>
       <p>Срез датасета: <strong>{data?.as_of_date ?? '—'}</strong><br />Изменения текущего запуска учитываются после обновления.</p>
     </div>
@@ -60,7 +60,7 @@ export function HrDashboard() {
       </div>
       {data.summary.employees === 0 && <EmptyState title="Нет сотрудников" message="Для этого сочетания отдела и грейда нет профилей. Измените фильтры." />}
       <SectionCard title="Каких навыков не хватает" eyebrow="01 · Компетенции">
-        <p className="muted">Сравнение актуальных навыков с требованиями следующего грейда текущей роли. Доля рассчитана среди сотрудников, которым нужен этот навык; Lead без следующего грейда не входит в расчёт.</p>
+        <p className="muted">Сравнение актуальных навыков с требованиями следующего грейда текущей роли. Доля рассчитана среди сотрудников, которым нужен этот навык; сотрудники с грейдом «Лид» без следующего грейда не входят в расчёт.</p>
         {!data.skill_gaps.length ? <EmptyState title="Дефициты не найдены" message="В выборке нет недостающих навыков для следующего грейда или сам следующий грейд не задан." /> : <div className="hr-table-scroll" tabIndex={0} role="region" aria-label="Дефициты навыков"><table className="hr-table">
           <thead><tr><th scope="col">Навык</th><th scope="col">Сотрудники с дефицитом</th><th scope="col">Средний разрыв</th><th scope="col">Критический дефицит</th></tr></thead>
           <tbody>{data.skill_gaps.map(skill => <tr key={skill.skill_id}>
@@ -77,7 +77,7 @@ export function HrDashboard() {
           <thead><tr><th scope="col">Сотрудник</th><th scope="col">Отдел / роль</th><th scope="col">Грейд</th><th scope="col">Причина</th></tr></thead>
           <tbody>{people.map(person => <tr key={person.employee_id}>
             <td><Link className="hr-profile-link" to={`/employee/${encodeURIComponent(person.employee_id)}`}>{person.full_name} ↗</Link><small>{person.employee_id}</small></td>
-            <td>{person.department}<small>{person.role}</small></td><td>{person.grade}{person.next_grade && <small>→ {person.next_grade}</small>}</td>
+            <td>{person.department}<small>{person.role}</small></td><td>{gradeLabel(person.grade)}{person.next_grade && <small>→ {gradeLabel(person.next_grade)}</small>}</td>
             <td><span className={`hr-reason ${person.reason === 'no_eligible_events' ? 'attention' : ''}`}>{reasonLabels[person.reason]}</span></td>
           </tr>)}</tbody>
         </table></div>}

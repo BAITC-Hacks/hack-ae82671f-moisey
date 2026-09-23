@@ -5,20 +5,20 @@ const str = (v: unknown): string | undefined => typeof v === 'string' && v.trim(
 const num = (v: unknown): number | undefined => typeof v === 'number' && Number.isFinite(v) ? v : undefined;
 function list(v: unknown, key: string): unknown[] {
   const value = Array.isArray(v) ? v : row(v)?.[key];
-  if (!Array.isArray(value)) throw new ApiError(`Expected ${key} array from API.`, 'invalid');
+  if (!Array.isArray(value)) throw new ApiError(`Сервер не вернул список ${key === 'employees' ? 'сотрудников' : key === 'recommendations' ? 'рекомендаций' : key}.`, 'invalid');
   return value;
 }
 function employee(v: unknown): Employee {
   const item = row(v),
     employee_id = str(item?.employee_id),
     full_name = str(item?.full_name);
-  if (!employee_id || !full_name) throw new ApiError('Employee response is missing employee_id or full_name.', 'invalid');
+  if (!employee_id || !full_name) throw new ApiError('В ответе сервера отсутствуют employee_id или full_name.', 'invalid');
   const goal = row(item?.career_goal);
   return {
     employee_id,
     full_name,
-    role: str(item?.role) ?? 'Role unavailable',
-    grade: str(item?.grade) ?? 'Grade unavailable',
+    role: str(item?.role) ?? 'Роль не указана',
+    grade: str(item?.grade) ?? 'Грейд не указан',
     department: str(item?.department),
     career_goal: goal ? {
       target_role: str(goal.target_role),
@@ -43,7 +43,7 @@ function gap(v: unknown): SkillGap | null {
 }
 export function toCareer(v: unknown): CareerView {
   const source = row(v);
-  if (!source) throw new ApiError('Career response is not an object.', 'invalid');
+  if (!source) throw new ApiError('Некорректный ответ сервера о карьерном профиле.', 'invalid');
   const item = row(source.career) ?? source,
     raw = item.skill_gaps ?? item.gaps,
     requirements = row(item.next_grade_requirements),

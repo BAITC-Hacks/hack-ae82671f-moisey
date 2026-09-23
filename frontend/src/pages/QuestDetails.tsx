@@ -73,35 +73,35 @@ export function QuestDetails() {
 
   return (
     <div className="page-stack quest-detail-page">
-      <Link className="back-link" to={id ? `/employee/${encodeURIComponent(id)}` : '/'}>← Back to dashboard</Link>
-      {loading ? <LoadingState label="Loading quest..." /> : error ? (
+      <Link className="back-link" to={id ? `/employee/${encodeURIComponent(id)}` : '/'}>← К профилю сотрудника</Link>
+      {loading ? <LoadingState label="Загрузка квеста..." /> : error ? (
         <ErrorState error={error} onRetry={() => setRetryKey(key => key + 1)} />
       ) : !quest || !id ? (
-        <EmptyState title="Quest unavailable" message="This event is not in the current recommendation list." />
+        <EmptyState title="Квест недоступен" message="Этой активности нет в текущем списке рекомендаций." />
       ) : (
-        <SectionCard title={quest.title} eyebrow="QUEST DETAILS" className="quest-detail-card">
+        <SectionCard title={quest.title} eyebrow="ДЕТАЛИ КВЕСТА" className="quest-detail-card">
           <div className="quest-meta">
-            {quest.rank !== undefined && <span>Rank #{quest.rank}</span>}
-            {quest.score !== undefined && <span>Recommendation score: {quest.score}</span>}
-            {quest.durationHours !== undefined && <span>{quest.durationHours} hours</span>}
+            {quest.rank !== undefined && <span>Место в рейтинге: #{quest.rank}</span>}
+            {quest.score !== undefined && <span>Оценка соответствия: {quest.score}</span>}
+            {quest.durationHours !== undefined && <span>Длительность: {quest.durationHours} ч.</span>}
           </div>
 
           <div className="skill-section">
-            <h3>Target skills and expected gain</h3>
-            {quest.targetSkills.length === 0 ? <p className="muted">The backend did not supply target skills.</p> : (
+            <h3>Целевые навыки и ожидаемый прирост</h3>
+            {quest.targetSkills.length === 0 ? <p className="muted">Сервер не указал целевые навыки.</p> : (
               <div className="quest-target-list">{quest.targetSkills.map(skill => (
                 <div className="quest-target-row" key={skill.skillId}>
                   <SkillBadge name={skill.skillId.replace(/^SK_/, '').replace(/_/g, ' ')} />
                   <strong>{skill.current ?? '—'} → {skill.expected ?? '—'}</strong>
-                  <span>Expected gain {skill.gain === undefined ? 'not provided' : `+${skill.gain}`}</span>
+                  <span>Ожидаемый прирост: {skill.gain === undefined ? 'не указан' : `+${skill.gain}`}</span>
                 </div>
               ))}</div>
             )}
           </div>
 
           <div className="quest-why">
-            <span className="eyebrow">WHY THIS QUEST</span>
-            {quest.reasonFactors.length > 0 ? <ul>{quest.reasonFactors.map((factor, index) => <li key={index}>{factor}</li>)}</ul> : <p>Explanation not supplied by the backend.</p>}
+            <span className="eyebrow">ПОЧЕМУ ЭТОТ КВЕСТ?</span>
+            {quest.reasonFactors.length > 0 ? <ul>{quest.reasonFactors.map((factor, index) => <li key={index}>{factor}</li>)}</ul> : <p>Сервер не предоставил объяснение.</p>}
           </div>
 
           {completed ? (
@@ -118,12 +118,12 @@ export function QuestDetails() {
           ) : (
             <div className="quest-actions">
               <button className="button button-primary" disabled={submitting} onClick={finishQuest}>
-                {submitting ? 'COMPLETING...' : 'COMPLETE QUEST'}
+                {submitting ? 'ЗАВЕРШЕНИЕ...' : 'ЗАВЕРШИТЬ КВЕСТ'}
               </button>
-              <p>Completion is sent to the backend.</p>
+              <p>Завершение квеста сохранится на сервере текущего запуска.</p>
             </div>
           )}
-          {endpointMissing ? <p className="completion-error" role="alert">The backend completion endpoint is not implemented yet.</p> : completeError !== null ? <ErrorState error={completeError} /> : null}
+          {endpointMissing ? <p className="completion-error" role="alert">Сервер пока не поддерживает завершение квеста.</p> : completeError !== null ? <ErrorState error={completeError} /> : null}
         </SectionCard>
       )}
     </div>
