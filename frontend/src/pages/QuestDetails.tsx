@@ -92,7 +92,8 @@ export function QuestDetails() {
               <div className="quest-target-list">{quest.targetSkills.map(skill => (
                 <div className="quest-target-row" key={skill.skillId}>
                   <SkillBadge name={skill.skillId.replace(/^SK_/, '').replace(/_/g, ' ')} />
-                  <strong>{skill.current ?? '—'} → {skill.expected ?? '—'}</strong>
+                  <strong>Сейчас {skill.current ?? '—'} → После квеста {skill.expected ?? '—'}</strong>
+                  {beforeCareer?.gaps.find(gap => gap.skillId === skill.skillId)?.required !== undefined && <span>Требуется: {beforeCareer?.gaps.find(gap => gap.skillId === skill.skillId)?.required}</span>}
                   <span>Ожидаемый прирост: {skill.gain === undefined ? 'не указан' : `+${skill.gain}`}</span>
                 </div>
               ))}</div>

@@ -62,14 +62,17 @@ export function EmployeeSelector() {
   }
   return <div className="page-stack">
     <div className="hero"><span className="eyebrow">ВАШ СЛЕДУЮЩИЙ ШАГ НАЧИНАЕТСЯ ЗДЕСЬ</span><h1>Выберите <span>карьерный путь.</span></h1><p>Откройте профиль, узнайте о дефицитах навыков и выберите квест для развития.</p></div>
-    <SectionCard title="Загрузить тестовый профиль" eyebrow="ПРОФИЛЬ ДЛЯ ПРОВЕРКИ">
-      <p className="muted">Выберите JSON-объект сотрудника из схемы employees.json. Для истории используйте объект с полями employee и history (массив записей activity_history.csv).</p>
-      <label className="search-label" htmlFor="profile-file">Выберите JSON-файл</label>
-      <input id="profile-file" type="file" accept=".json,application/json" onChange={e => setProfileFile(e.target.files?.[0] ?? null)} />
-      <div className="quest-actions"><button className="button button-secondary" type="button" disabled={!profileFile || importing} onClick={uploadProfile}>{importing ? 'Загрузка…' : 'Загрузить профиль'}</button></div>
-      {importError && <p className="completion-error" role="alert">{importError}</p>}
-      {importedId && <p role="status">Профиль успешно загружен: <Link className="back-link" to={`/employee/${encodeURIComponent(importedId)}`}>{importedId} → открыть профиль</Link></p>}
-    </SectionCard>
+    <details className="profile-import">
+      <summary>Загрузить тестовый профиль</summary>
+      <div className="profile-import-body">
+        <p className="muted">Выберите JSON-объект сотрудника из схемы employees.json. Для истории используйте объект с полями employee и history (массив записей activity_history.csv).</p>
+        <label className="search-label" htmlFor="profile-file">Выберите JSON-файл</label>
+        <input id="profile-file" type="file" accept=".json,application/json" onChange={e => setProfileFile(e.target.files?.[0] ?? null)} />
+        <div className="quest-actions"><button className="button button-secondary" type="button" disabled={!profileFile || importing} onClick={uploadProfile}>{importing ? 'Загрузка…' : 'Загрузить профиль'}</button></div>
+        {importError && <p className="completion-error" role="alert">{importError}</p>}
+        {importedId && <p role="status">Профиль успешно загружен: <Link className="back-link" to={`/employee/${encodeURIComponent(importedId)}`}>{importedId} → открыть профиль</Link></p>}
+      </div>
+    </details>
     <SectionCard title="Выберите сотрудника" eyebrow="КАРЬЕРНЫЕ ПРОФИЛИ" action={!loading && !error && <span className="count-pill">Доступно: {employees.length}</span>}>
       {loading ? <LoadingState label="Загрузка сотрудников..." /> : error ? <ErrorState error={error} onRetry={retry} /> : employees.length === 0 ? <EmptyState title="Сотрудников пока нет" message="Сервер вернул пустой список сотрудников." /> : <>
         <label className="search-label" htmlFor="employee-search">Поиск сотрудников</label>

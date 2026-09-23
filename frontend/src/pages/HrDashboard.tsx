@@ -50,7 +50,6 @@ export function HrDashboard() {
       </select></label>
       <p>Срез датасета: <strong>{data?.as_of_date ?? '—'}</strong><br />Изменения текущего запуска учитываются после обновления.</p>
     </div>
-    <p className="hr-note">Демонстрационный HR-экран. Разграничение доступа по ролям пока не реализовано.</p>
     {loading ? <LoadingState label="Рассчитываем показатели команды…" /> : error ? <ErrorState error={error} onRetry={refresh} /> : data && <>
       <div className="hr-metrics">
         <div><span>Сотрудников в выборке</span><strong>{data.summary.employees}</strong></div>

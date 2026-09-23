@@ -204,7 +204,6 @@ h1,h2,h3,.brand{font-family:Space Grotesk,system-ui,sans-serif}
 .hr-filters select,.hr-reason-filter select{font:inherit;max-width:100%;padding:11px 32px 11px 12px;border:1px solid #395671;border-radius:9px;background:#0d192d;color:#edf2ff}
 .hr-filters select:focus-visible,.hr-reason-filter select:focus-visible{outline:2px solid #65e4d0;outline-offset:2px}
 .hr-filters p{margin:0 0 3px auto;color:#92aac4;font-size:12px;line-height:1.7}
-.hr-note{margin:-12px 0 0;color:#9baec7;font-size:12px;line-height:1.6}
 .hr-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
 .hr-metrics>div{display:flex;flex-direction:column;gap:10px;padding:22px 18px;border:1px solid #2d465f;border-radius:15px;background:linear-gradient(145deg,#173144,#101d32)}
 .hr-metrics span{color:#b1c3d6;font-size:12px;line-height:1.5}
@@ -234,3 +233,31 @@ h1,h2,h3,.brand{font-family:Space Grotesk,system-ui,sans-serif}
 .hr-table td small.hr-live{color:#7ce2bf}
 @media(max-width:900px){.hr-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.hr-filters p{margin-left:0}.hr-dashboard .dashboard-hero{flex-wrap:wrap}}
 @media(max-width:520px){.hr-filters{flex-direction:column;align-items:stretch}.hr-metrics{gap:9px}.hr-metrics>div{padding:15px 12px}.hr-metrics strong{font-size:30px}.hr-dashboard .section-card-header{align-items:flex-start}.hr-reason-filter select{width:100%}.hr-dashboard .dashboard-hero h1{font-size:36px}}
+
+/* Keep the employee's next step visible early in the demo. */
+.employee-dashboard{gap:20px}
+.employee-dashboard .dashboard-hero{padding:2px 0}
+.employee-dashboard .section-card{padding:18px 20px}
+.employee-dashboard .section-card-header{margin-bottom:12px}
+.dashboard-progress-content{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}
+.dashboard-progress-content .grade-track{margin:0;padding:13px}
+.dashboard-progress-details .muted{margin:0 0 10px}
+.dashboard-progress-details .muted strong{color:#83eed5}
+.dashboard-gap-preview{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.dashboard-gap-preview>span{display:inline-flex;align-items:center;gap:6px;padding:3px 7px 3px 3px;border:1px solid #39516a;border-radius:8px;background:#12273b;color:#deedfa;font-size:12px}
+.dashboard-gap-preview .skill-badge{padding:4px 6px}
+.dashboard-gap-preview small{color:#91adc4}
+.career-goal-note{margin:8px 0 0;font-size:12px}
+.employee-dashboard .demo-quest-card{gap:12px;padding:18px}
+.employee-dashboard .demo-quest-card.featured{border-width:2px;border-color:#70e8d4;box-shadow:0 0 0 1px #70e8d424,0 15px 32px #05101b55}
+.employee-dashboard .featured .quest-rank{display:inline-block;padding:6px 9px;border-radius:7px;background:#75e7cf;color:#072a2b;font-size:11px}
+.quest-levels{color:#a7c3d4;font-size:12px;line-height:1.5}
+.quest-levels strong{color:#edfffb;font-size:14px}
+.employee-dashboard .featured .quest-why{border-left-width:3px;border-left-color:#7cf4dc;background:#103544}
+.profile-import{border:1px solid #2a4057;border-radius:14px;background:#101d30;color:#a7c2d5}
+.profile-import summary{cursor:pointer;padding:16px 20px;font-size:13px;font-weight:700;color:#9edfcf}
+.profile-import summary:hover{color:#ddfff7}
+.profile-import-body{padding:2px 20px 20px}
+.profile-import-body .muted{font-size:13px}
+.profile-import-body .quest-actions{margin-top:18px;padding-top:18px}
+@media(max-width:760px){.dashboard-progress-content{grid-template-columns:1fr}.employee-dashboard .demo-quest-card{padding:18px}}
