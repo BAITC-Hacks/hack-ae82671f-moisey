@@ -1,13 +1,52 @@
-import { useEffect,useState } from 'react'
-import { Link,useParams } from 'react-router-dom'
-import { completeActivity,getRecommendations } from '../api/client'
-import type { Recommendation } from '../api/types'
-import { EmptyState,ErrorState,LoadingState } from '../components/States'
-import { SectionCard,SkillBadge } from '../components/Ui'
-export function QuestDetails(){
- const {id,eventId}=useParams(),[quest,setQuest]=useState<Recommendation|null>(null),[loading,setLoading]=useState(true),[error,setError]=useState<unknown>(null),[completeError,setCompleteError]=useState<unknown>(null),[submitting,setSubmitting]=useState(false),[completed,setCompleted]=useState(false),[retryKey,setRetryKey]=useState(0)
- useEffect(()=>{if(!id||!eventId)return;let active=true;getRecommendations(id).then((items)=>{if(active)setQuest(items.find((item)=>item.eventId===eventId)??null)}).catch((reason:unknown)=>{if(active)setError(reason)}).finally(()=>{if(active)setLoading(false)});return()=>{active=false}},[id,eventId,retryKey])
- const retry=()=>{setLoading(true);setError(null);setRetryKey((key)=>key+1)}
- async function finishQuest(){if(!id||!eventId)return;setSubmitting(true);setCompleteError(null);try{await completeActivity(id,eventId);setCompleted(true)}catch(reason){setCompleteError(reason)}finally{setSubmitting(false)}}
- return <div className="page-stack quest-detail-page"><Link className="back-link" to={id?`/employee/${encodeURIComponent(id)}`:'/'}>← Back to dashboard</Link>{loading?<LoadingState label="Loading quest..."/>:error?<ErrorState error={error} onRetry={retry}/>:!quest?<EmptyState title="Quest unavailable" message="This event is not in the current recommendation list."/>:<SectionCard title={quest.title} eyebrow="QUEST DETAILS" className="quest-detail-card"><div className="quest-meta"><span>{quest.type??'Activity'}</span><span>{quest.format??'Format not specified'}</span>{quest.durationHours!==undefined&&<span>{quest.durationHours} hours</span>}</div><p className="quest-description">{quest.description??quest.reason??'No description is available yet.'}</p>{quest.reason&&quest.description&&<p className="quest-reason"><strong>Why this quest:</strong> {quest.reason}</p>}{quest.developsSkills.length>0&&<div className="skill-section"><h3>Skills developed</h3><div className="skill-list">{quest.developsSkills.map((skill)=><SkillBadge key={skill} name={skill}/>)}</div></div>}{completed?<div className="success-message" role="status"><strong>Quest completed.</strong><span>Return to your dashboard to view the latest API data.</span><Link to={`/employee/${encodeURIComponent(id!)}`}>Return to dashboard →</Link></div>:<div className="quest-actions"><button className="button button-primary" disabled={submitting} onClick={finishQuest}>{submitting?'Completing...':'Complete quest'}</button><p>Completion is sent to the backend.</p></div>}{completeError!==null&&<ErrorState error={completeError} onRetry={finishQuest}/>}</SectionCard>}</div>
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { completeActivity, getRecommendations } from '../api/client';
+import type { Recommendation } from '../api/types';
+import { EmptyState, ErrorState, LoadingState } from '../components/States';
+import { SectionCard, SkillBadge } from '../components/Ui';
+export function QuestDetails() {
+  const {
+      id,
+      eventId
+    } = useParams(),
+    [quest, setQuest] = useState<Recommendation | null>(null),
+    [loading, setLoading] = useState(true),
+    [error, setError] = useState<unknown>(null),
+    [completeError, setCompleteError] = useState<unknown>(null),
+    [submitting, setSubmitting] = useState(false),
+    [completed, setCompleted] = useState(false),
+    [retryKey, setRetryKey] = useState(0);
+  useEffect(() => {
+    if (!id || !eventId) return;
+    let active = true;
+    getRecommendations(id).then(items => {
+      if (active) setQuest(items.find(item => item.eventId === eventId) ?? null);
+    }).catch((reason: unknown) => {
+      if (active) setError(reason);
+    }).finally(() => {
+      if (active) setLoading(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [id, eventId, retryKey]);
+  const retry = () => {
+    setLoading(true);
+    setError(null);
+    setRetryKey(key => key + 1);
+  };
+  async function finishQuest() {
+    if (!id || !eventId) return;
+    setSubmitting(true);
+    setCompleteError(null);
+    try {
+      await completeActivity(id, eventId);
+      setCompleted(true);
+    } catch (reason) {
+      setCompleteError(reason);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+  return <div className="page-stack quest-detail-page"><Link className="back-link" to={id ? `/employee/${encodeURIComponent(id)}` : '/'}>← Back to dashboard</Link>{loading ? <LoadingState label="Loading quest..." /> : error ? <ErrorState error={error} onRetry={retry} /> : !quest ? <EmptyState title="Quest unavailable" message="This event is not in the current recommendation list." /> : <SectionCard title={quest.title} eyebrow="QUEST DETAILS" className="quest-detail-card"><div className="quest-meta"><span>{quest.type ?? 'Activity'}</span><span>{quest.format ?? 'Format not specified'}</span>{quest.durationHours !== undefined && <span>{quest.durationHours} hours</span>}</div><p className="quest-description">{quest.description ?? quest.reason ?? 'No description is available yet.'}</p>{quest.reason && quest.description && <p className="quest-reason"><strong>Why this quest:</strong> {quest.reason}</p>}{quest.developsSkills.length > 0 && <div className="skill-section"><h3>Skills developed</h3><div className="skill-list">{quest.developsSkills.map(skill => <SkillBadge key={skill} name={skill} />)}</div></div>}{completed ? <div className="success-message" role="status"><strong>Quest completed.</strong><span>Return to your dashboard to view the latest API data.</span><Link to={`/employee/${encodeURIComponent(id!)}`}>Return to dashboard →</Link></div> : <div className="quest-actions"><button className="button button-primary" disabled={submitting} onClick={finishQuest}>{submitting ? 'Completing...' : 'Complete quest'}</button><p>Completion is sent to the backend.</p></div>}{completeError !== null && <ErrorState error={completeError} onRetry={finishQuest} />}</SectionCard>}</div>;
 }
