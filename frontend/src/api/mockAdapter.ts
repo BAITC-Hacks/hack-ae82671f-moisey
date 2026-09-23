@@ -25,33 +25,35 @@ const careers: Record<string, CareerView> = {
   E0001: {
     targetRole: 'Backend Engineer',
     targetGrade: 'Middle',
-    readinessPercent: 46,
     gaps: [{
       skillId: 'SK_SYSTEM_DESIGN',
       name: 'System Design',
       current: 1,
-      required: 3
+      required: 3,
+      gap: 2
     }, {
       skillId: 'SK_CLOUD',
       name: 'Cloud Platforms',
       current: 1,
-      required: 2
+      required: 2,
+      gap: 1
     }]
   },
   E0002: {
     targetRole: 'Backend Engineer',
     targetGrade: 'Senior',
-    readinessPercent: 62,
     gaps: [{
       skillId: 'SK_SYSTEM_DESIGN',
       name: 'System Design',
       current: 1,
-      required: 4
+      required: 4,
+      gap: 3
     }, {
       skillId: 'SK_OBSERVABILITY',
       name: 'Observability',
       current: 2,
-      required: 3
+      required: 3,
+      gap: 1
     }]
   }
 };
@@ -59,6 +61,10 @@ const recommendations: Record<string, Recommendation[]> = {
   E0001: [{
     eventId: 'EV_008',
     title: 'System Design Foundations',
+    rank: 1,
+    score: 16,
+    targetSkills: [{ skillId: 'SK_SYSTEM_DESIGN', current: 1, gain: 1, expected: 2 }],
+    reasonFactors: ['System Design: level 1, required 3, gap 2, expected gain +1.'],
     type: 'course',
     format: 'self_paced',
     durationHours: 6,
@@ -67,6 +73,10 @@ const recommendations: Record<string, Recommendation[]> = {
   }, {
     eventId: 'EV_014',
     title: 'Cloud Architecture Workshop',
+    rank: 2,
+    score: 10,
+    targetSkills: [{ skillId: 'SK_CLOUD', current: 1, gain: 1, expected: 2 }],
+    reasonFactors: ['Cloud Platforms: level 1, required 2, gap 1, expected gain +1.'],
     type: 'workshop',
     format: 'online',
     durationHours: 3,
@@ -76,6 +86,10 @@ const recommendations: Record<string, Recommendation[]> = {
   E0002: [{
     eventId: 'EV_023',
     title: 'Production Observability',
+    rank: 1,
+    score: 9,
+    targetSkills: [{ skillId: 'SK_OBSERVABILITY', current: 2, gain: 1, expected: 3 }],
+    reasonFactors: ['Observability: level 2, required 3, gap 1, expected gain +1.'],
     type: 'course',
     format: 'self_paced',
     durationHours: 4,

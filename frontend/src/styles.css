@@ -127,3 +127,35 @@ h1,h2,h3,.brand{font-family:Space Grotesk,system-ui,sans-serif}
 .grade-pill{margin-top:0}
 }
 
+.grade-summary{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.grade-summary span{display:flex;flex-direction:column;gap:3px;min-width:130px;padding:11px 14px;border:1px solid #31516d;border-radius:12px;background:#12283d;color:#8fa9c4;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.grade-summary strong{color:#e7f9f7;font-family:'Space Grotesk',sans-serif;font-size:18px;text-transform:none;letter-spacing:0}
+.skill-table-wrap{overflow-x:auto}
+.skill-table{width:100%;border-collapse:collapse;text-align:left;min-width:540px}
+.skill-table th{color:#8299b7;font-size:11px;text-transform:uppercase;letter-spacing:.1em;padding:0 12px 12px}
+.skill-table td{padding:11px 12px;border-top:1px solid #293950;color:#d9e7f6;font-size:13px}
+.skill-table th:first-child,.skill-table td:first-child{padding-left:0}
+.skill-status{display:inline-block;border-radius:99px;padding:5px 9px;font-size:11px;font-weight:800}
+.skill-status.met{background:#173b34;color:#78e0bd}
+.skill-status.missing{background:#463322;color:#f1c481}
+.demo-quest-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.demo-quest-card{display:flex;flex-direction:column;align-items:flex-start;gap:17px;padding:22px;border:1px solid #34455e;background:#101f34;border-radius:16px}
+.demo-quest-card.featured{grid-column:1/-1;border-color:#63dfce;background:linear-gradient(110deg,#163746,#112139);box-shadow:0 0 32px #40d6ca1a}
+.demo-quest-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;width:100%}
+.demo-quest-head h3{font-size:21px;line-height:1.2;margin:6px 0 0}
+.quest-rank{color:#75decf;font-size:12px;font-weight:800;letter-spacing:.1em}
+.featured .quest-rank{color:#a7f9e3}
+.quest-score{color:#9ab0c8;border:1px solid #375771;border-radius:9px;padding:8px 11px;white-space:nowrap;font-size:12px}
+.quest-score strong{color:#f0fbfc;font-size:17px;margin-left:5px}
+.quest-skill-grid{display:flex;flex-wrap:wrap;gap:9px;width:100%}
+.quest-skill{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:9px 11px;background:#0d2a3e;border:1px solid #2b526b;border-radius:10px}
+.quest-skill strong{font-size:15px;color:#e8fff7}
+.quest-skill small{color:#89b9c1;font-size:11px}
+.quest-why{width:100%;border-left:2px solid #56cfc0;padding:10px 14px;background:#102b3a;border-radius:0 8px 8px 0}
+.quest-why .eyebrow{margin-bottom:8px}
+.quest-why ul{margin:0;padding-left:18px;color:#bacce0;font-size:13px;line-height:1.6}
+.quest-why li+li{margin-top:5px}
+.quest-why p{margin:0;color:#9db0c9;font-size:13px}
+.demo-quest-card>.button{margin-top:auto}
+@media(max-width:760px){.grade-summary{justify-content:flex-start}.demo-quest-list{grid-template-columns:1fr}.demo-quest-card.featured{grid-column:auto}}
+

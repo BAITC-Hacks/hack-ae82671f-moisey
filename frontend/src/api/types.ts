@@ -14,6 +14,7 @@ export interface SkillGap {
   name: string;
   current: number;
   required: number;
+  gap: number;
 }
 export interface CareerView {
   targetRole?: string;
@@ -24,6 +25,10 @@ export interface CareerView {
 export interface Recommendation {
   eventId: string;
   title: string;
+  rank?: number;
+  score?: number;
+  targetSkills: { skillId: string; current?: number; expected?: number; gain?: number }[];
+  reasonFactors: string[];
   description?: string;
   reason?: string;
   type?: string;

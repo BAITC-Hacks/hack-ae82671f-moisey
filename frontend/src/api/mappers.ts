@@ -37,7 +37,8 @@ function gap(v: unknown): SkillGap | null {
     skillId,
     name: str(item?.name ?? item?.skill_name) ?? skillId,
     current,
-    required
+    required,
+    gap: num(item?.gap) ?? Math.max(0, required - current)
   } : null;
 }
 export function toCareer(v: unknown): CareerView {
@@ -48,11 +49,12 @@ export function toCareer(v: unknown): CareerView {
     raw = item.skill_gaps ?? item.gaps,
     requirements = row(item.next_grade_requirements),
     skills = row(item.current_skills);
-  const gaps = Array.isArray(raw) ? raw.map(gap).filter((x): x is SkillGap => x !== null) : row(raw) ? Object.entries(row(raw)!).filter(([, amount]) => (num(amount) ?? 0) > 0).map(([skillId]) => ({
+  const gaps = Array.isArray(raw) ? raw.map(gap).filter((x): x is SkillGap => x !== null) : requirements ? Object.entries(requirements).map(([skillId, requiredLevel]) => ({
     skillId,
     name: skillId.replace(/^SK_/, '').replace(/_/g, ' '),
     current: num(skills?.[skillId]) ?? 0,
-    required: num(requirements?.[skillId]) ?? 0
+    required: num(requiredLevel) ?? 0,
+    gap: num(row(raw)?.[skillId]) ?? 0
   })) : [];
   return {
     targetRole: str(item.target_role ?? goal?.target_role ?? row(item.employee)?.role),
@@ -61,16 +63,26 @@ export function toCareer(v: unknown): CareerView {
     gaps
   };
 }
-function recommendation(v: unknown): Recommendation | null {
+function recommendation(v: unknown, effectiveSkills: Row | null): Recommendation | null {
   const item = row(v),
     event = row(item?.event) ?? item,
     eventId = str(event?.event_id ?? item?.event_id);
   if (!eventId) return null;
   const skills = event?.develops_skills ?? event?.target_skills,
-    reasons = item?.reason_factors;
+    reasons = item?.reason_factors,
+    expectedGain = row(item?.expected_gain),
+    targetSkillIds = Array.isArray(item?.target_skills) ? item.target_skills : [];
   return {
     eventId,
     title: str(event?.title ?? event?.event_name) ?? eventId,
+    rank: num(item?.rank),
+    score: num(item?.score),
+    targetSkills: targetSkillIds.map(str).filter((skillId): skillId is string => Boolean(skillId)).map(skillId => {
+      const current = num(effectiveSkills?.[skillId]);
+      const gain = num(expectedGain?.[skillId]);
+      return { skillId, current, gain, expected: current !== undefined && gain !== undefined ? current + gain : undefined };
+    }),
+    reasonFactors: Array.isArray(reasons) ? reasons.map(str).filter((reason): reason is string => Boolean(reason)) : [],
     description: str(event?.description),
     reason: str(item?.reason) ?? (Array.isArray(reasons) ? str(reasons[0]) : undefined),
     type: str(event?.type),
@@ -79,4 +91,7 @@ function recommendation(v: unknown): Recommendation | null {
     developsSkills: Array.isArray(skills) ? skills.map(x => str(row(x)?.skill_id ?? x)).filter((x): x is string => Boolean(x)) : []
   };
 }
-export const toRecommendations = (v: unknown): Recommendation[] => list(v, 'recommendations').map(recommendation).filter((x): x is Recommendation => x !== null);
+export function toRecommendations(v: unknown): Recommendation[] {
+  const effectiveSkills = row(row(v)?.effective_skills);
+  return list(v, 'recommendations').map(item => recommendation(item, effectiveSkills)).filter((x): x is Recommendation => x !== null);
+}
