@@ -59,7 +59,7 @@ export function HrDashboard() {
       </div>
       {data.summary.employees === 0 && <EmptyState title="Нет сотрудников" message="Для этого сочетания отдела и грейда нет профилей. Измените фильтры." />}
       <SectionCard title="Каких навыков не хватает" eyebrow="01 · Компетенции">
-        <p className="muted">Сравнение актуальных навыков с требованиями следующего грейда текущей роли. Доля рассчитана среди сотрудников, которым нужен этот навык; сотрудники с грейдом «Лид» без следующего грейда не входят в расчёт.</p>
+        <p className="muted">Сравнение актуальных навыков с требованиями следующего грейда текущей роли. Доля рассчитана среди сотрудников, которым нужен этот навык; сотрудники с грейдом «Lead» без следующего грейда не входят в расчёт.</p>
         {!data.skill_gaps.length ? <EmptyState title="Дефициты не найдены" message="В выборке нет недостающих навыков для следующего грейда или сам следующий грейд не задан." /> : <div className="hr-table-scroll" tabIndex={0} role="region" aria-label="Дефициты навыков"><table className="hr-table">
           <thead><tr><th scope="col">Навык</th><th scope="col">Сотрудники с дефицитом</th><th scope="col">Средний разрыв</th><th scope="col">Критический дефицит</th></tr></thead>
           <tbody>{data.skill_gaps.map(skill => <tr key={skill.skill_id}>

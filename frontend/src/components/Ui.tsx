@@ -1,6 +1,5 @@
 import type { PropsWithChildren, ReactNode } from 'react';
-const gradeLabels: Record<string, string> = { Junior: 'Джуниор', Middle: 'Мидл', Senior: 'Сеньор', Lead: 'Лид' };
-export const gradeLabel = (grade: string): string => gradeLabels[grade] ?? grade;
+export const gradeLabel = (grade: string): string => grade;
 export function ProgressBar({
   value,
   label
