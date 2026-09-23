@@ -159,3 +159,18 @@ h1,h2,h3,.brand{font-family:Space Grotesk,system-ui,sans-serif}
 .demo-quest-card>.button{margin-top:auto}
 @media(max-width:760px){.grade-summary{justify-content:flex-start}.demo-quest-list{grid-template-columns:1fr}.demo-quest-card.featured{grid-column:auto}}
 
+.quest-target-list{display:flex;flex-direction:column;gap:9px}
+.quest-target-row,.completion-skill{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:11px 13px;border:1px solid #30506a;border-radius:10px;background:#102b3e}
+.quest-target-row strong,.completion-skill strong{color:#e8fff7;font-size:16px}
+.quest-target-row span:last-child,.completion-skill span:last-child{color:#a3bed1;font-size:12px}
+.quest-detail-card>.quest-why{margin-top:26px}
+.completion-result{margin-top:28px;padding:22px;border:1px solid #3e8d79;border-radius:14px;background:#12342e}
+.completion-result h3{font-size:25px;margin:0 0 18px}
+.completion-result h4{font-family:'Space Grotesk',sans-serif;font-size:15px;margin:0 0 12px}
+.completion-result p{color:#bdd5d0;font-size:13px;line-height:1.55}
+.completion-metrics{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:22px}
+.completion-metrics>div{display:flex;flex-direction:column;gap:9px}
+.completion-metrics h4:not(:first-child){margin-top:13px}
+.completion-error{color:#f1bdac;background:#412b31;border:1px solid #865253;border-radius:9px;padding:13px 15px;margin-top:18px}
+@media(max-width:760px){.completion-metrics{grid-template-columns:1fr}}
+

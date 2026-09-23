@@ -97,7 +97,6 @@ const recommendations: Record<string, Recommendation[]> = {
     developsSkills: ['SK_OBSERVABILITY']
   }]
 };
-const completed = new Set<string>();
 const pause = () => new Promise(resolve => setTimeout(resolve, 180));
 function assertEmployee(employeeId: string) {
   const result = employees.find(x => x.employee_id === employeeId);
@@ -121,12 +120,12 @@ export const mockAdapter = {
   async getRecommendations(employeeId: string) {
     await pause();
     assertEmployee(employeeId);
-    return recommendations[employeeId].filter(x => !completed.has(`${employeeId}:${x.eventId}`));
+    return recommendations[employeeId];
   },
   async completeActivity(employeeId: string, eventId: string) {
     await pause();
     assertEmployee(employeeId);
     if (!recommendations[employeeId].some(x => x.eventId === eventId)) throw new ApiError('Quest not found in demo data.', 'http', 404);
-    completed.add(`${employeeId}:${eventId}`);
+    throw new ApiError('Completion is not implemented in the backend yet.', 'http', 501);
   }
 };
