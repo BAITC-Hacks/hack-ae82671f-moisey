@@ -156,26 +156,52 @@ class DatasetRepository:
             return {}
         return dict(self.role_profiles[employee["role"], next_grade]["required_skills"])
 
-    def get_skill_gaps(self, employee_id: str) -> dict[str, int]:
+    def get_skill_gaps(
+        self, employee_id: str, current_skills: dict[str, int] | None = None
+    ) -> dict[str, int]:
         employee = self.employees[employee_id]
+        levels = employee["skills"] if current_skills is None else current_skills
         requirements = self.get_next_grade_requirements(employee_id)
         return {
-            skill_id: max(0, required_level - employee["skills"].get(skill_id, 0))
+            skill_id: max(0, required_level - levels.get(skill_id, 0))
             for skill_id, required_level in requirements.items()
         }
 
-    def get_career(self, employee_id: str) -> dict[str, Any]:
+    @staticmethod
+    def calculate_readiness(
+        requirements: dict[str, int], current_skills: dict[str, int]
+    ) -> float | None:
+        """Percentage of required skill levels met; no next grade means N/A."""
+        total = sum(requirements.values())
+        if total == 0:
+            return None
+        met = sum(
+            min(current_skills.get(skill_id, 0), required_level)
+            for skill_id, required_level in requirements.items()
+        )
+        return round(100 * met / total, 2)
+
+    def get_career(
+        self, employee_id: str, current_skills: dict[str, int] | None = None
+    ) -> dict[str, Any]:
         employee = self.employees[employee_id]
+        levels = dict(employee["skills"] if current_skills is None else current_skills)
         next_grade = self.get_next_grade(employee_id)
+        requirements = self.get_next_grade_requirements(employee_id)
+        gaps = self.get_skill_gaps(employee_id, levels)
         profile = (
             self.role_profiles[employee["role"], next_grade] if next_grade else None
         )
         return {
-            "employee": employee,
+            "employee": {**employee, "skills": levels},
             "current_grade": employee["grade"],
             "next_grade": next_grade,
-            "current_skills": dict(employee["skills"]),
-            "next_grade_requirements": self.get_next_grade_requirements(employee_id),
+            "current_skills": levels,
+            "next_grade_requirements": requirements,
             "critical_skills": list(profile["critical_skills"]) if profile else [],
-            "skill_gaps": self.get_skill_gaps(employee_id),
+            "skill_gaps": gaps,
+            "readiness": self.calculate_readiness(requirements, levels),
+            "ready_for_next_grade": next_grade is not None and all(
+                gap == 0 for gap in gaps.values()
+            ),
         }

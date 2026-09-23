@@ -4,9 +4,12 @@ from __future__ import annotations
 
 from collections import Counter
 from datetime import date
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .repository import DatasetRepository
+
+if TYPE_CHECKING:
+    from .runtime_state import RuntimeState
 
 
 # The dataset README and EV_036 description explicitly allow this one repeatable event.
@@ -15,8 +18,11 @@ HISTORY_PENALTIES = {"no_show": 0.75, "dropped": 1.0, "declined": 1.5}
 
 
 class RecommendationEngine:
-    def __init__(self, repository: DatasetRepository) -> None:
+    def __init__(
+        self, repository: DatasetRepository, runtime_state: RuntimeState | None = None
+    ) -> None:
         self.repository = repository
+        self.runtime_state = runtime_state
         self.as_of_date = date.fromisoformat(repository.meta["as_of_date"])
 
     def effective_skills(self, employee_id: str) -> dict[str, int]:
@@ -25,6 +31,9 @@ class RecommendationEngine:
         A history row has no completion timestamp. For completed rows, its session
         or enrollment date is the only available date for this comparison.
         """
+        if self.runtime_state is not None:
+            return self.runtime_state.current_skills(employee_id)
+
         employee = self.repository.employees[employee_id]
         levels = dict(employee["skills"])
         last_review = date.fromisoformat(employee["last_review_date"])
@@ -108,7 +117,13 @@ class RecommendationEngine:
         }
         if "in_progress" in statuses:
             return False
-        if "completed" in statuses and event_id not in REPEATABLE_EVENT_IDS:
+        runtime_completed = (
+            self.runtime_state is not None
+            and self.runtime_state.was_completed(employee["employee_id"], event_id)
+        )
+        if (
+            "completed" in statuses or runtime_completed
+        ) and event_id not in REPEATABLE_EVENT_IDS:
             return False
         return True
 
