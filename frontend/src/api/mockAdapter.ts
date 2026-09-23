@@ -23,6 +23,7 @@ const employees: Employee[] = [{
 }];
 const careers: Record<string, CareerView> = {
   E0001: {
+    currentGrade: 'Junior',
     targetRole: 'Backend Engineer',
     targetGrade: 'Middle',
     gaps: [{
@@ -40,6 +41,7 @@ const careers: Record<string, CareerView> = {
     }]
   },
   E0002: {
+    currentGrade: 'Middle',
     targetRole: 'Backend Engineer',
     targetGrade: 'Senior',
     gaps: [{

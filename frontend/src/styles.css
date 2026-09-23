@@ -174,3 +174,26 @@ h1,h2,h3,.brand{font-family:Space Grotesk,system-ui,sans-serif}
 .completion-error{color:#f1bdac;background:#412b31;border:1px solid #865253;border-radius:9px;padding:13px 15px;margin-top:18px}
 @media(max-width:760px){.completion-metrics{grid-template-columns:1fr}}
 
+.career-map{display:flex;flex-direction:column;align-items:center;gap:13px}
+.career-map-grade{width:min(100%,460px);padding:15px 20px;border:1px solid #397a74;border-radius:12px;background:#113c42;text-align:center}
+.career-map-grade small{display:block;color:#8fc7c5;font-size:10px;font-weight:800;letter-spacing:.14em;margin-bottom:5px}
+.career-map-grade strong{font-family:'Space Grotesk',sans-serif;font-size:20px;text-transform:uppercase}
+.career-map-grade.next.locked{border-color:#4a5870;background:#1a2537;color:#a3b3c9}
+.career-map-grade.next.unlocked{border-color:#65dcb2;background:#164334}
+.career-map-grade.next>span{display:block;margin-top:7px;font-size:11px;font-weight:800;letter-spacing:.1em}
+.career-map-arrow{color:#66dcc9;font-size:22px;line-height:1}
+.career-map-skills{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;width:100%}
+.career-map-skill{min-width:0;display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center;text-align:left;padding:11px 12px;border:1px solid #31536c;border-radius:10px;background:#11263b;color:#e7f0fc;transition:border-color .18s,background-color .18s,transform .18s}
+.career-map-skill:hover,.career-map-skill:focus-visible{border-color:#6bdfcb;background:#18394b;transform:translateY(-2px)}
+.career-map-skill[aria-expanded=true]{border-color:#78e2d0}
+.career-map-skill-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;text-transform:capitalize}
+.career-map-skill strong{font-size:13px;white-space:nowrap}
+.career-map-skill small{grid-column:1/-1;font-size:10px;font-weight:800;letter-spacing:.08em}
+.career-map-skill.unlocked small{color:#75e0b3}
+.career-map-skill.progress small{color:#e5c17a}
+.career-map-skill.locked small{color:#9aa9bf}
+.career-map-detail{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 16px;width:100%;padding:12px;border:1px solid #3a6f7d;border-radius:9px;background:#102c3e;color:#bcd6e3;font-size:12px}
+.career-map-detail strong{color:#eefbf9}
+@media(max-width:760px){.career-map-skills{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:460px){.career-map-skills{grid-template-columns:1fr}}
+

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { getCareer, getEmployee, getRecommendations } from '../api/client'
 import type { CareerView, Employee, Recommendation } from '../api/types'
 import { EmptyState, ErrorState, LoadingState } from '../components/States'
+import { CareerMap } from '../components/CareerMap'
 import { SectionCard, SkillBadge } from '../components/Ui'
 
 type DashboardData = {
@@ -64,6 +65,10 @@ export function EmployeeDashboard() {
           <div><small>NEXT GRADE</small><strong>{career.targetGrade ?? 'No next grade'}</strong></div>
         </div>
         <p className="muted">{missingCount > 0 ? `${missingCount} skills below the next grade requirement` : career.targetGrade ? 'All listed skill requirements are met.' : 'No next grade requirements are available.'}</p>
+      </SectionCard>
+
+      <SectionCard title="Career Map" eyebrow="FOG OF WAR">
+        <CareerMap career={career} />
       </SectionCard>
 
       <SectionCard title="Skills for the next grade" eyebrow="WHAT AM I MISSING?" action={<span className="count-pill">{missingCount} missing</span>}>

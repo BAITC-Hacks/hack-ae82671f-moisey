@@ -57,6 +57,7 @@ export function toCareer(v: unknown): CareerView {
     gap: num(row(raw)?.[skillId]) ?? 0
   })) : [];
   return {
+    currentGrade: str(item.current_grade ?? row(item.employee)?.grade),
     targetRole: str(item.target_role ?? goal?.target_role ?? row(item.employee)?.role),
     targetGrade: str(item.target_grade ?? item.next_grade ?? goal?.target_grade),
     readinessPercent: num(item.readiness_percent),

@@ -17,6 +17,7 @@ export interface SkillGap {
   gap: number;
 }
 export interface CareerView {
+  currentGrade?: string;
   targetRole?: string;
   targetGrade?: string;
   readinessPercent?: number;
