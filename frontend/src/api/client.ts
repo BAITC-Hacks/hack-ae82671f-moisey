@@ -1,7 +1,7 @@
 import { toCareer,toEmployee,toEmployees,toRecommendations } from './mappers'
 import { mockAdapter } from './mockAdapter'
 import { ApiError,type CareerView,type Employee,type Recommendation } from './types'
-export const apiBaseUrl=(import.meta.env.VITE_API_URL||'http://localhost:8000').replace(/\/+$/,'')
+export const apiBaseUrl=(import.meta.env.VITE_API_URL||'/api').replace(/\/+$/,'')
 export const useMock=import.meta.env.VITE_USE_MOCK==='true'
 async function request(path:string,options?:RequestInit):Promise<unknown>{let response:Response;try{response=await fetch(`${apiBaseUrl}${path}`,{...options,headers:{Accept:'application/json',...options?.headers}})}catch{throw new ApiError('Backend is unavailable. Check the API URL and that the server is running.','unavailable')}if(!response.ok)throw new ApiError(`API request failed (${response.status}).`,'http',response.status);if(options?.method==='POST'||response.status===204)return undefined;const body=await response.text();if(!body)return undefined;try{return JSON.parse(body) as unknown}catch{throw new ApiError('API returned invalid JSON.','invalid')}}
 const id=encodeURIComponent
