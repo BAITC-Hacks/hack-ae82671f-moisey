@@ -17,7 +17,7 @@
 ### Интерфейс Career Quest
 
 <p align="center">
-  <img src="docs/screenshots/main.png" alt="Главный экран Career Quest" width="900">
+  <img src="docs/screenshots/main.jpeg" alt="Главный экран Career Quest" width="900">
 </p>
 
 Главный экран Career Quest позволяет выбрать сотрудника и перейти к его персональному карьерному маршруту.
@@ -27,13 +27,13 @@
 <table>
   <tr>
     <td width="50%">
-      <img src="docs/screenshots/profile.png" alt="Карьерный профиль сотрудника">
+      <img src="docs/screenshots/profile.jpeg" alt="Карьерный профиль сотрудника">
       <br>
       <b>Карьерный профиль</b><br>
       Текущий и следующий грейд, готовность и персональные рекомендации.
     </td>
     <td width="50%">
-      <img src="docs/screenshots/career-map.png" alt="Карта карьерного развития">
+      <img src="docs/screenshots/career-map.jpeg" alt="Карта карьерного развития">
       <br>
       <b>Карта карьеры</b><br>
       Выполненные требования и навыки, которые необходимо развить.
@@ -41,13 +41,13 @@
   </tr>
   <tr>
     <td width="50%">
-      <img src="docs/screenshots/quest.png" alt="Карьерный квест">
+      <img src="docs/screenshots/quest.jpeg" alt="Карьерный квест">
       <br>
       <b>Рекомендованный квест</b><br>
       Целевые навыки, ожидаемый прирост и объяснение рекомендации.
     </td>
     <td width="50%">
-      <img src="docs/screenshots/quest-result.png" alt="Результат прохождения квеста">
+      <img src="docs/screenshots/quest-result.jpeg" alt="Результат прохождения квеста">
       <br>
       <b>Результат квеста</b><br>
       Фактический прирост навыков и изменение готовности к следующему грейду.
