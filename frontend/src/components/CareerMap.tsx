@@ -16,7 +16,7 @@ export function CareerMap({ career }: { career: CareerView }) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selected = career.gaps.find(skill => skill.skillId === selectedId)
   const nextUnlocked = career.gaps.length > 0 && career.gaps.every(skill => skill.gap === 0)
-  const role = career.targetRole ? ` ${career.targetRole}` : ''
+  const role = career.currentRole ? ` ${career.currentRole}` : ''
 
   return (
     <div className="career-map">

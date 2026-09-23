@@ -45,7 +45,6 @@ export function toCareer(v: unknown): CareerView {
   const source = row(v);
   if (!source) throw new ApiError('Career response is not an object.', 'invalid');
   const item = row(source.career) ?? source,
-    goal = row(item.career_goal),
     raw = item.skill_gaps ?? item.gaps,
     requirements = row(item.next_grade_requirements),
     skills = row(item.current_skills);
@@ -57,10 +56,10 @@ export function toCareer(v: unknown): CareerView {
     gap: num(row(raw)?.[skillId]) ?? 0
   })) : [];
   return {
+    currentRole: str(row(item.employee)?.role),
     currentGrade: str(item.current_grade ?? row(item.employee)?.grade),
-    targetRole: str(item.target_role ?? goal?.target_role ?? row(item.employee)?.role),
-    targetGrade: str(item.target_grade ?? item.next_grade ?? goal?.target_grade),
-    readinessPercent: num(item.readiness_percent),
+    targetGrade: str(item.next_grade),
+    readinessPercent: num(item.readiness),
     gaps
   };
 }

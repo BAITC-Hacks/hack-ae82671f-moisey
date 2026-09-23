@@ -65,6 +65,9 @@ export function EmployeeDashboard() {
           <div><small>NEXT GRADE</small><strong>{career.targetGrade ?? 'No next grade'}</strong></div>
         </div>
         <p className="muted">{missingCount > 0 ? `${missingCount} skills below the next grade requirement` : career.targetGrade ? 'All listed skill requirements are met.' : 'No next grade requirements are available.'}</p>
+        {employee.career_goal && (employee.career_goal.target_role || employee.career_goal.target_grade) && (
+          <p className="muted">Career Goal: {[employee.career_goal.target_role, employee.career_goal.target_grade].filter(Boolean).join(' · ')}</p>
+        )}
       </SectionCard>
 
       <SectionCard title="Career Map" eyebrow="FOG OF WAR">
