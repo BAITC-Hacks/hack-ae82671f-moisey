@@ -8,7 +8,7 @@ export function ProgressBar({
   label: string;
 }) {
   const safe = Math.min(100, Math.max(0, value));
-  return <div className="progress-wrap"><div className="progress-heading"><span>{label}</span><strong>{Math.round(safe)}%</strong></div><div className="progress-track" role="progressbar" aria-valuenow={safe} aria-valuemin={0} aria-valuemax={100} aria-label={label}><span style={{
+  return <div className="progress-wrap"><div className="progress-heading"><span>{label}</span><strong>{value}%</strong></div><div className="progress-track" role="progressbar" aria-valuenow={safe} aria-valuemin={0} aria-valuemax={100} aria-label={label}><span style={{
         width: `${safe}%`
       }} /></div></div>;
 }

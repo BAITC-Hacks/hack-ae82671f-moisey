@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import type { CareerView, Recommendation } from '../api/types'
 import { ErrorState, LoadingState } from './States'
-import { SkillBadge } from './Ui'
+import { ProgressBar, SkillBadge } from './Ui'
 
 type Props = {
   employeeId: string
@@ -19,10 +19,12 @@ export function CompleteQuestResult({ employeeId, quest, before, after, remainin
     ? before.gaps.filter(skill => skill.gap > 0 && after.gaps.some(updated => updated.skillId === skill.skillId && updated.gap === 0))
     : null
   const readinessAvailable = before?.readinessPercent !== undefined && after?.readinessPercent !== undefined
+  const readinessGain = readinessAvailable ? Math.round((after!.readinessPercent! - before!.readinessPercent!) * 100) / 100 : undefined
 
   return (
     <div className="completion-result" role="status">
       <span className="eyebrow">КВЕСТ ЗАВЕРШЁН</span>
+      <p className="completion-subtitle">АКТИВНОСТЬ ПРОЙДЕНА</p>
       <h3>{quest.title}</h3>
       {refreshing && <LoadingState label="Обновление профиля и рекомендаций..." />}
       {refreshError !== null && <div>
@@ -30,29 +32,33 @@ export function CompleteQuestResult({ employeeId, quest, before, after, remainin
         <button className="button button-secondary" onClick={onRefresh}>Повторить обновление</button>
       </div>}
 
-      {!refreshing && <div className="completion-metrics">
+      {!refreshing && after && <div className="completion-metrics">
         <div>
-          <h4>Прирост навыков</h4>
+          <h4>SKILL LEVEL UP · ПРИРОСТ НАВЫКОВ</h4>
           {quest.targetSkills.length === 0 ? <p>Сервер не указал целевые навыки.</p> : quest.targetSkills.map(target => {
             const previous = before?.gaps.find(skill => skill.skillId === target.skillId)?.current ?? target.current
             const updated = after?.gaps.find(skill => skill.skillId === target.skillId)?.current
             const appliedGain = previous !== undefined && updated !== undefined ? updated - previous : undefined
             return <div className="completion-skill" key={target.skillId}>
-              <SkillBadge name={target.skillId.replace(/^SK_/, '').replace(/_/g, ' ')} />
+              <SkillBadge name={target.name ?? target.skillId.replace(/^SK_/, '').replace(/_/g, ' ')} />
               <strong>{previous ?? '—'} → {updated ?? '—'}</strong>
-              <span>Фактический прирост: {appliedGain === undefined ? 'недоступен' : `${appliedGain >= 0 ? '+' : ''}${appliedGain}`}</span>
+              <span>{appliedGain === undefined ? 'Прирост недоступен' : `${appliedGain >= 0 ? '+' : ''}${appliedGain} уровень`}</span>
             </div>
           })}
         </div>
         <div>
-          <h4>Готовность к следующему грейду</h4>
-          <p>{readinessAvailable ? `${before!.readinessPercent}% → ${after!.readinessPercent}%` : 'Сервер не предоставил показатель готовности.'}</p>
-          <h4>Новые выполненные требования</h4>
-          {newlySatisfied === null ? <p>Появятся после обновления профиля.</p> : newlySatisfied.length === 0 ? <p>Новых выполненных требований нет.</p> : <div className="skill-list">{newlySatisfied.map(skill => <SkillBadge key={skill.skillId} name={skill.name} />)}</div>}
+          <h4>ГОТОВНОСТЬ К {before?.targetGrade ?? 'СЛЕДУЮЩЕМУ ГРЕЙДУ'}</h4>
+          <p className="completion-readiness">{readinessAvailable ? `${before!.readinessPercent}% → ${after.readinessPercent}%` : 'Сервер не предоставил показатель готовности.'}</p>
+          {readinessGain !== undefined && <strong className="completion-gain">{readinessGain >= 0 ? '+' : ''}{readinessGain}%</strong>}
+          {after.readinessPercent !== undefined && <ProgressBar value={after.readinessPercent} label="Готовность после прохождения" />}
+          {newlySatisfied && newlySatisfied.length > 0 && <div className="completion-unlocked">
+            <h4>НОВОЕ ТРЕБОВАНИЕ ВЫПОЛНЕНО</h4>
+            <div className="skill-list">{newlySatisfied.map(skill => <span key={skill.skillId}>✓ {quest.targetSkills.find(target => target.skillId === skill.skillId)?.name ?? skill.name}</span>)}</div>
+          </div>}
           {remainingQuests !== null && <p>Рекомендаций после обновления: {remainingQuests}.</p>}
         </div>
       </div>}
-      <Link className="button button-primary" to={`/employee/${encodeURIComponent(employeeId)}`}>Продолжить развитие</Link>
+      <Link className="button button-primary" to={`/employee/${encodeURIComponent(employeeId)}`}>ПРОДОЛЖИТЬ РАЗВИТИЕ</Link>
     </div>
   )
 }

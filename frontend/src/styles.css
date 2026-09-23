@@ -164,7 +164,28 @@ h1,h2,h3,.brand{font-family:Space Grotesk,system-ui,sans-serif}
 .quest-target-row strong,.completion-skill strong{color:#e8fff7;font-size:16px}
 .quest-target-row span:last-child,.completion-skill span:last-child{color:#a3bed1;font-size:12px}
 .quest-detail-card>.quest-why{margin-top:26px}
+.quest-catalog-note{color:#a9bed2;font-size:14px;line-height:1.5;margin:-10px 0 18px}
+.quest-detail-card .skill-section{margin:22px 0}
+.quest-detail-card .quest-target-row{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.quest-level-grid{display:flex;flex-wrap:wrap;gap:8px;width:100%}
+.quest-level-grid>span{flex:1;min-width:145px;padding:10px 12px;border:1px solid #29475c;border-radius:9px;background:#0c2435}
+.quest-level-grid small{display:block;color:#94abc1;font-size:10px;font-weight:800;letter-spacing:.06em;min-height:28px}
+.quest-level-grid strong{display:block;color:#effffb;font-size:23px;margin-top:4px}
+.quest-detail-card .quest-expected-gain{color:#7fe1ce;font-size:13px;font-weight:700}
+.career-impact{margin-top:24px;padding:20px;border:1px solid #3c786f;border-radius:14px;background:linear-gradient(115deg,#123b40,#102b3b)}
+.career-impact-grades{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+.career-impact-grades span{display:flex;flex-direction:column;gap:4px;min-width:150px;color:#a8c3cd;font-size:12px}
+.career-impact-grades strong{color:#f0fff9;font-size:20px}
+.career-impact .progress-track,.completion-result .progress-track{height:10px}
+.career-impact-change{margin:10px 0 0;color:#82e6d2;font-size:14px;font-weight:800}
+.quest-detail-card .quest-actions{align-items:flex-start;flex-direction:column;gap:9px}
+.quest-detail-card .quest-actions p{max-width:540px;line-height:1.5}
 .completion-result{margin-top:28px;padding:22px;border:1px solid #3e8d79;border-radius:14px;background:#12342e}
+.completion-subtitle{color:#93e7d0;font-size:11px;font-weight:800;letter-spacing:.12em;margin:0 0 4px}
+.completion-readiness{font-size:22px!important;color:#f4fffb!important;font-weight:700;margin:0}
+.completion-gain{color:#7eeac8;font-size:18px}
+.completion-unlocked{border-top:1px solid #426b61;padding-top:16px;margin-top:12px}
+.completion-unlocked .skill-list span{color:#94efce;font-weight:700;font-size:13px}
 .completion-result h3{font-size:25px;margin:0 0 18px}
 .completion-result h4{font-family:'Space Grotesk',sans-serif;font-size:15px;margin:0 0 12px}
 .completion-result p{color:#bdd5d0;font-size:13px;line-height:1.55}

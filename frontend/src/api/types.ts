@@ -28,7 +28,7 @@ export interface Recommendation {
   title: string;
   rank?: number;
   score?: number;
-  targetSkills: { skillId: string; current?: number; expected?: number; gain?: number }[];
+  targetSkills: { skillId: string; name?: string; current?: number; expected?: number; gain?: number }[];
   reasonFactors: string[];
   description?: string;
   reason?: string;

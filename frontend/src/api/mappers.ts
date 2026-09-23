@@ -71,6 +71,7 @@ function recommendation(v: unknown, effectiveSkills: Row | null): Recommendation
   const skills = event?.develops_skills ?? event?.target_skills,
     reasons = item?.reason_factors,
     expectedGain = row(item?.expected_gain),
+    skillNames = row(item?.skill_names),
     targetSkillIds = Array.isArray(item?.target_skills) ? item.target_skills : [];
   return {
     eventId,
@@ -80,7 +81,7 @@ function recommendation(v: unknown, effectiveSkills: Row | null): Recommendation
     targetSkills: targetSkillIds.map(str).filter((skillId): skillId is string => Boolean(skillId)).map(skillId => {
       const current = num(effectiveSkills?.[skillId]);
       const gain = num(expectedGain?.[skillId]);
-      return { skillId, current, gain, expected: current !== undefined && gain !== undefined ? current + gain : undefined };
+      return { skillId, name: str(skillNames?.[skillId]), current, gain, expected: current !== undefined && gain !== undefined ? current + gain : undefined };
     }),
     reasonFactors: Array.isArray(reasons) ? reasons.map(str).filter((reason): reason is string => Boolean(reason)) : [],
     description: str(event?.description),

@@ -4,6 +4,7 @@ import { getCareer, getEmployee, getRecommendations } from '../api/client'
 import type { CareerView, Employee, Recommendation } from '../api/types'
 import { EmptyState, ErrorState, LoadingState } from '../components/States'
 import { CareerMap } from '../components/CareerMap'
+import { RecommendationReasons } from '../components/RecommendationReasons'
 import { SectionCard, SkillBadge, gradeLabel } from '../components/Ui'
 
 type DashboardData = {
@@ -89,13 +90,13 @@ export function EmployeeDashboard() {
               </div>
               {quest.targetSkills.length > 0 && <div className="quest-skill-grid">{quest.targetSkills.map(skill => (
                 <div className="quest-skill" key={skill.skillId}>
-                  <SkillBadge name={skillName(skill.skillId)} />
+                  <SkillBadge name={skill.name ?? skillName(skill.skillId)} />
                   <span className="quest-levels">Сейчас <strong>{skill.current ?? '—'}</strong> → Требуется <strong>{career.gaps.find(gap => gap.skillId === skill.skillId)?.required ?? '—'}</strong> → После квеста <strong>{skill.expected ?? '—'}</strong></span>
                   {skill.gain !== undefined && <small>Прирост +{skill.gain}</small>}
                 </div>
               ))}</div>}
               <div className="quest-why"><span className="eyebrow">ПОЧЕМУ ЭТОТ КВЕСТ?</span>
-                {quest.reasonFactors.length > 0 ? <ul>{quest.reasonFactors.map((factor, index) => <li key={`${quest.eventId}-${index}`}>{factor}</li>)}</ul> : <p>Сервер не предоставил объяснение.</p>}
+                <RecommendationReasons factors={quest.reasonFactors} nextGrade={career.targetGrade} compact />
               </div>
               <Link className={`button ${quest.rank === 1 ? 'button-primary' : 'button-secondary'}`} to={`/employee/${encodeURIComponent(id)}/quest/${encodeURIComponent(quest.eventId)}`}>Открыть квест →</Link>
             </article>
