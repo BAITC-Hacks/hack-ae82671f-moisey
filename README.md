@@ -1,9 +1,122 @@
-# hack-ae82671f-moisey
-Hackathon team repository for Moisey
+# Career Quest
 
-## Career Quest data API
+## 1. Название проекта
 
-From the repository root, run in PowerShell (verified with Python 3.11.7):
+**Career Quest** — прототип навигатора карьерного развития сотрудников. Проект команды Moisey для кейса Career Quest хакатона HackAlem AI.
+
+## 2. Краткое описание
+
+Проект помогает сотруднику увидеть разрыв между своими навыками и требованиями следующего грейда и выбрать подходящую развивающую активность. Рекомендации учитывают требования роли, критические навыки, доступность мероприятий и историю участия.
+
+Текущая версия содержит API для работы с датасетом, алгоритм рекомендаций на основе явных правил и веб-интерфейс сотрудника. AI/LLM-модель пока не подключена. HR-аналитика и сохранение новых результатов прохождения ещё не реализованы.
+
+## 3. Что реализовано
+
+| Возможность | Текущее состояние |
+| --- | --- |
+| Загрузка данных | Чтение четырёх JSON/CSV-файлов, проверка уникальности идентификаторов и связей между записями |
+| Выбор сотрудника | Список профилей и поиск по имени, роли или отделу |
+| Карьерная траектория | Текущий и следующий грейд текущей роли, требования и дефициты навыков |
+| Рекомендации | До трёх подходящих мероприятий с ранжированием; при отсутствии вариантов — пустой список |
+| Объяснения | API возвращает факторы выбора, составляющие балла и ожидаемый прирост; интерфейс показывает первое текстовое обоснование |
+| Учёт истории | Расчёт навыков после последней оценки для рекомендаций; штрафы за пропуски, отказы и прекращённые попытки того же мероприятия |
+| Карточка активности | Название, доступные сведения об активности, развиваемые навыки и обоснование |
+| Деморежим | Два встроенных профиля; завершённая активность скрывается из рекомендаций в памяти браузера |
+| Автотесты backend | Проверки фильтрации, ранжирования, прироста навыков и обработчиков API |
+
+## 4. Как работает решение
+
+1. Backend при запуске загружает профили, каталог навыков, мероприятия и историю из `data/`.
+2. Пользователь выбирает сотрудника в интерфейсе.
+3. API определяет следующий грейд текущей роли: `Junior → Middle → Senior → Lead`, затем сравнивает навыки с его требованиями.
+4. Для рекомендаций алгоритм дополнительно учитывает завершённые активности после `last_review_date`, но не позднее даты среза датасета.
+5. Алгоритм отбирает мероприятия с положительным приростом хотя бы по одному дефицитному навыку. Исключаются обязательные мероприятия, неподходящие роли и грейды, невыполненные требования к участию, уже начатые или завершённые активности и мероприятия без будущей сессии. Для `self_paced` сессия не требуется. `EV_036` допускает повторное прохождение.
+6. Кандидаты ранжируются по дефициту навыков, полезному приросту, критичности навыков и истории участия. Пользователь получает до трёх рекомендаций и открывает карточку выбранной активности.
+
+Прирост учитывает `gain` и `max_level`:
+
+```text
+прирост = max(0, min(gain, max_level − текущий уровень))
+новый уровень = текущий уровень + прирост
+полезный прирост = min(прирост, дефицит до целевого уровня)
+```
+
+| Компонент балла | Расчёт |
+| --- | --- |
+| `skill_gap_score` | `2 × Σ(дефицит × полезный прирост)` |
+| `next_grade_relevance` | `2 × число улучшаемых дефицитных навыков / число навыков мероприятия` |
+| `critical_skill_score` | `3 × Σ(полезный прирост критических навыков)` |
+| `expected_gain_score` | `Σ(полезный прирост)` |
+| `history_score` | `−min(3, 0.75 × no_show + 1 × dropped + 1.5 × declined)` для того же мероприятия |
+
+Итоговый балл — сумма компонентов. При равных баллах учитываются прирост критических навыков, общий полезный прирост, затем `event_id`. Веса заданы в коде, а не получены обучением модели.
+
+## 5. Технологии
+
+| Компонент | Технологии |
+| --- | --- |
+| Backend | Python, FastAPI, Uvicorn; стандартные модули `json`, `csv`, `datetime`, `pathlib` |
+| Frontend | TypeScript, React 18, React Router 6, Vite 6, CSS |
+| Тестирование backend | pytest, unittest |
+| Хранение данных | Локальные JSON/CSV-файлы и индексы в памяти backend |
+| AI-модели и внешние API | Не подключены; API-ключи для текущей версии не нужны |
+
+Зависимости backend указаны в `backend/requirements.txt`, frontend — в `frontend/package.json` и `frontend/package-lock.json`.
+
+## 6. Архитектура проекта
+
+```text
+README.md
+data/
+  employees.json             Профили сотрудников
+  events.json                Каталог мероприятий
+  skills.json                Навыки и требования ролей по грейдам
+  activity_history.csv       История участия
+backend/
+  requirements.txt
+  app/
+    main.py                  HTTP API
+    repository.py            Чтение, индексация и проверка данных
+    recommendations.py       Фильтрация и ранжирование мероприятий
+  tests/
+    test_recommendations.py
+frontend/
+  package.json
+  vite.config.ts             Прокси /api на backend
+  src/
+    api/                     HTTP-клиент, преобразование ответов, демоданные
+    components/              Общие компоненты интерфейса
+    pages/                   Список сотрудников, профиль, активность, HR-заглушка
+```
+
+В режиме разработки браузер обращается к `/api` на сервере Vite. Vite удаляет префикс `/api` и передаёт запрос FastAPI на `http://localhost:8000`. Backend читает данные через `DatasetRepository`; рекомендации вычисляет `RecommendationEngine`. Исходные файлы данных не изменяются.
+
+| Метод и путь API | Назначение |
+| --- | --- |
+| `GET /health` | Проверка доступности API |
+| `GET /employees` | Список сотрудников |
+| `GET /employees/{employee_id}` | Профиль сотрудника |
+| `GET /employees/{employee_id}/career` | Следующий грейд, требования и дефициты по последней оценке |
+| `GET /employees/{employee_id}/recommendations` | Рекомендации и навыки с учётом истории после оценки |
+
+Интерактивная документация FastAPI после запуска: <http://localhost:8000/docs>.
+
+## 7. Установка и запуск
+
+Нужны Git, Python 3.10+ с `pip` и `venv`, а также Node.js и npm, совместимые с версией Vite из `frontend/package-lock.json`. Команды ниже предназначены для Windows PowerShell. Backend и frontend запускаются в двух отдельных терминалах.
+
+### Получение репозитория
+
+Для приватного репозитория необходим доступ и настроенная авторизация GitHub.
+
+```powershell
+git clone https://github.com/BAITC-Hacks/hack-ae82671f-moisey.git
+cd hack-ae82671f-moisey
+```
+
+Если репозиторий уже клонирован, откройте его корневую папку.
+
+### Терминал 1 — backend
 
 ```powershell
 python -m venv .venv
@@ -11,57 +124,108 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
 ```
 
-The API reads the four source files in `data/`. Set `CAREER_QUEST_DATA_DIR` to
-another directory with the same four filenames to load another dataset.
+### Терминал 2 — frontend
 
-Available endpoints: `GET /health`, `GET /employees`,
-`GET /employees/{employee_id}`, `GET /employees/{employee_id}/career`, and
-`GET /employees/{employee_id}/recommendations`.
-The repository also provides `get_history(employee_id)` for later modules.
-The career endpoint compares the employee's last assessed skill levels with the
-next grade of their current role. Missing employee skills count as level 0;
-the response includes zero gaps for requirements already met. A Lead has no
-next grade, so its requirements and gaps are empty. History-based skill gains
-are outside this initial data layer and are not included in `current_skills`.
+Из корневой папки репозитория:
 
-## Recommendations
+```powershell
+cd frontend
+npm.cmd ci
+npm.cmd run dev
+```
 
-`/recommendations` returns up to three events for the next grade of the
-employee's current role. It uses the dataset snapshot date (`meta.as_of_date`),
-not the computer's current date. Its `effective_skills` starts with the last
-assessment and adds completed activities whose history date is later than
-`last_review_date`, respecting each event's `gain` and `max_level`. The CSV has
-no completion timestamp, so its session/enrollment date is the available
-approximation. `/career` retains its original assessment-based calculation.
+Откройте адрес, который напечатает Vite, обычно <http://localhost:5173>. Для стандартного запуска `.env` не требуется: по умолчанию используются настоящий API и встроенный прокси Vite.
 
-The engine generates events with a positive gain toward at least one gap, then
-filters mandatory events, mismatched roles or grades, unmet prerequisites,
-scheduled events without a future session, events already in progress, and
-events already completed. `EV_036` is the documented repeatable exception.
-`no_show`, `dropped`, and `declined` remain eligible but reduce the score when
-they happened for the same event. A Lead or employee without eligible events
-receives an empty recommendations list.
+### Параметры конфигурации
 
-The total score is the sum of these visible components (points):
-
-| Component | Calculation |
+| Переменная | Назначение |
 | --- | --- |
-| `skill_gap_score` | `2 × Σ(gap × useful_gain)` |
-| `next_grade_relevance` | `2 × (number of target-gap skills improved / number of event skills)` |
-| `critical_skill_score` | `3 × Σ(useful_gain for critical target skills)` |
-| `expected_gain_score` | `Σ(useful_gain)` |
-| `history_score` | `−min(3, 0.75 × no_show + 1 × dropped + 1.5 × declined)` |
+| `CAREER_QUEST_DATA_DIR` | Каталог с четырьмя файлами датасета; задаётся перед запуском backend |
+| `VITE_BACKEND_URL` | Адрес backend для прокси Vite; по умолчанию `http://localhost:8000` |
+| `VITE_API_URL` | Базовый URL запросов браузера; по умолчанию `/api` |
+| `VITE_USE_MOCK` | Значение `true` включает встроенные демонстрационные данные вместо backend |
 
-Here `useful_gain = min(gap, max(0, min(gain, max_level − effective_level)))`.
-Weights are explicit ranking policy, not attributes of the dataset. Ties use
-critical gain, total useful gain, then `event_id`, in that order. Eligibility is
-a filter rather than a score, because every returned event must be eligible.
-Each recommendation includes its component scores, affected skills, expected
-gain, reasons, next session and duration. A zero score is allowed if history
-penalties balance the benefits; an event is still eligible.
+Для деморежима в терминале frontend:
 
-Run all backend tests from the repository root:
+```powershell
+$env:VITE_USE_MOCK = "true"
+npm.cmd run dev
+```
+
+Для возврата к настоящему API остановите Vite, задайте `$env:VITE_USE_MOCK = "false"` и запустите его снова. Переменные `VITE_*` доступны браузеру; секреты в них хранить нельзя. При прямом обращении к backend с другого origin потребуется настройка CORS, которой сейчас нет; стандартный запуск использует прокси.
+
+## 8. Как проверить решение
+
+### Основной сценарий с датасетом
+
+1. Запустите backend и frontend без деморежима.
+2. Откройте список сотрудников и профиль `E0001` по адресу `/employee/E0001` на сервере frontend.
+3. Проверьте отображение текущего грейда `Junior`, следующего грейда `Middle`, дефицитов навыков и рекомендаций.
+4. Откройте карточку рекомендованной активности. Для исходного датасета тест в репозитории ожидает на первом месте `EV_005`.
+5. Откройте `/docs` на backend и выполните запрос рекомендаций, чтобы увидеть полный `score_breakdown`, `reason_factors`, `expected_gain` и `effective_skills`.
+
+API можно проверить из отдельного PowerShell:
+
+```powershell
+Invoke-RestMethod http://localhost:8000/health
+Invoke-RestMethod http://localhost:8000/employees/E0001/career | ConvertTo-Json -Depth 10
+Invoke-RestMethod http://localhost:8000/employees/E0001/recommendations | ConvertTo-Json -Depth 10
+```
+
+Ожидаемый ответ `/health`: `{"status":"ok"}`. Неизвестный сотрудник возвращает HTTP 404. Для `E0006` следующий грейд отсутствует и рекомендации пусты; для `E0041` тесты ожидают пустой список при наличии дефицитов.
+
+Кнопка `Complete quest` в режиме настоящего API пока возвращает ошибку: серверный обработчик завершения не реализован. В деморежиме кнопка скрывает активность из рекомендаций до перезагрузки страницы, но не увеличивает навыки.
+
+### Автотесты и сборка
+
+Из корня репозитория:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pytest backend\tests -v
 ```
+
+Из папки `frontend`:
+
+```powershell
+npm.cmd run build
+```
+
+Тесты проверяют записи поставляемого датасета, фильтрацию мероприятий, историю, ограничения прироста, повторяемость ранжирования и обработчики API. Команда сборки frontend проверяет TypeScript и создаёт `frontend/dist/`. Эти команды описывают способ проверки; результаты прогонов и замеры производительности здесь не заявляются.
+
+## 9. Данные и интеграции
+
+В репозитории находится датасет Career Quest версии `1.0` с датой среза **2026-10-01**. Рекомендации используют эту дату из `meta.as_of_date`, а не текущую дату компьютера.
+
+| Файл | Состав |
+| --- | --- |
+| `data/employees.json` | 200 профилей: роль, грейд, навыки, карьерная цель, дата последней оценки и другие поля |
+| `data/events.json` | 40 мероприятий: аудитория, требования, формат, сессии, `gain` и `max_level` по навыкам |
+| `data/skills.json` | 60 навыков и 32 профиля требований: 8 ролей × 4 грейда |
+| `data/activity_history.csv` | 2 743 записи участия |
+
+Для другого датасета подготовьте каталог с теми же четырьмя именами файлов и исходной структурой JSON/CSV. Укажите его перед запуском backend, например:
+
+```powershell
+$env:CAREER_QUEST_DATA_DIR = "D:\datasets\career-quest-test"
+.\.venv\Scripts\python.exe -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+```
+
+Профили и история должны ссылаться на существующие идентификаторы сотрудников, руководителей, мероприятий и навыков. После изменения файлов нужен перезапуск backend. Загрузка дополнительных профилей через веб-интерфейс не реализована. База данных и внешние сервисы не подключены.
+
+## 10. Ограничения текущей версии
+
+- **AI/LLM-интеграции нет.** Надпись `AI RECOMMENDATIONS` в интерфейсе не означает использование модели: фактически работает детерминированный алгоритм.
+- HR-страница `/hr` содержит заглушку; аналитики компетенций и вовлечённости пока нет.
+- Нет серверного завершения активности, записи новой истории и обновления прогресса по действию пользователя. Деморежим хранит отметки только в памяти браузера и не пересчитывает навыки.
+- Нет авторизации и разграничения доступа сотрудник/HR; доступны все загруженные профили. Это прототип для локальной демонстрации.
+- `/career` использует уровни последней оценки, а `/recommendations` добавляет прирост из истории после оценки. Поэтому дефициты в профиле могут отличаться от расчёта рекомендаций.
+- В истории нет отдельной даты завершения: для `completed` используется дата сессии/зачисления из CSV как приближение.
+- Рекомендации строятся для следующего грейда текущей роли. Поле `career_goal` не управляет алгоритмом; смена роли и развитие после `Lead` не рассчитываются.
+- Штрафы истории учитывают попытки того же мероприятия, а не похожие активности. Язык и формат работы не участвуют в ранжировании.
+- Интерфейс показывает только первый элемент `reason_factors`; полное объяснение доступно в API. Общий процент готовности backend не возвращает.
+- Нет интерфейса импорта проверочных профилей, просмотра истории участия и запуска всей системы одной командой.
+- Интерфейс преимущественно на английском; полной русской и казахской локализации нет. Замеры соответствия ограничениям по задержке не представлены.
+
+## 11. Развёрнутая версия
+
+Ссылка на опубликованную версию в репозитории не указана. Доступен локальный запуск по инструкции выше. Vite-прокси относится к серверу разработки; для размещения собранного frontend необходимо отдельно настроить маршрутизацию запросов к backend.
