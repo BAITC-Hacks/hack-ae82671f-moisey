@@ -1,7 +1,7 @@
 import { toCareer, toEmployee, toEmployees, toRecommendations } from './mappers';
 import { ApiError, type CareerView, type Employee, type Recommendation } from './types';
 export const apiBaseUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
-async function request(path: string, options?: RequestInit): Promise<unknown> {
+export async function request(path: string, options?: RequestInit): Promise<unknown> {
   let response: Response;
   try {
     response = await fetch(`${apiBaseUrl}${path}`, {

@@ -1,6 +1,7 @@
 """Career Quest data API."""
 
 from fastapi import FastAPI, HTTPException
+from .hr import HrService
 
 from .quests import QuestError, QuestService
 from .recommendations import RecommendationEngine
@@ -12,7 +13,16 @@ repository = DatasetRepository()
 runtime_state = RuntimeState(repository)
 recommendation_engine = RecommendationEngine(repository, runtime_state)
 quest_service = QuestService(repository, runtime_state, recommendation_engine)
+hr_service = HrService(repository, runtime_state, recommendation_engine)
 app = FastAPI(title="Career Quest Data API")
+
+
+@app.get("/hr/overview")
+def get_hr_overview(department: str | None = None, grade: str | None = None) -> dict:
+    try:
+        return hr_service.overview(department, grade)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @app.get("/health")
