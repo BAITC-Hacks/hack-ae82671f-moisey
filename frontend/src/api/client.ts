@@ -1,8 +1,6 @@
 import { toCareer, toEmployee, toEmployees, toRecommendations } from './mappers';
-import { mockAdapter } from './mockAdapter';
 import { ApiError, type CareerView, type Employee, type Recommendation } from './types';
 export const apiBaseUrl = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '');
-export const useMock = import.meta.env.VITE_USE_MOCK === 'true';
 async function request(path: string, options?: RequestInit): Promise<unknown> {
   let response: Response;
   try {
@@ -31,19 +29,18 @@ async function request(path: string, options?: RequestInit): Promise<unknown> {
 }
 const id = encodeURIComponent;
 export async function getEmployees(): Promise<Employee[]> {
-  return useMock ? mockAdapter.getEmployees() : toEmployees(await request('/employees'));
+  return toEmployees(await request('/employees'));
 }
 export async function getEmployee(employeeId: string): Promise<Employee> {
-  return useMock ? mockAdapter.getEmployee(employeeId) : toEmployee(await request(`/employees/${id(employeeId)}`));
+  return toEmployee(await request(`/employees/${id(employeeId)}`));
 }
 export async function getCareer(employeeId: string): Promise<CareerView> {
-  return useMock ? mockAdapter.getCareer(employeeId) : toCareer(await request(`/employees/${id(employeeId)}/career`));
+  return toCareer(await request(`/employees/${id(employeeId)}/career`));
 }
 export async function getRecommendations(employeeId: string): Promise<Recommendation[]> {
-  return useMock ? mockAdapter.getRecommendations(employeeId) : toRecommendations(await request(`/employees/${id(employeeId)}/recommendations`));
+  return toRecommendations(await request(`/employees/${id(employeeId)}/recommendations`));
 }
 export async function completeActivity(employeeId: string, eventId: string): Promise<void> {
-  if (useMock) return mockAdapter.completeActivity(employeeId, eventId);
   await request(`/employees/${id(employeeId)}/activities/${id(eventId)}/complete`, {
     method: 'POST'
   });
