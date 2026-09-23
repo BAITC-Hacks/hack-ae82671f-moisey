@@ -6,7 +6,7 @@ from .hr import HrService
 from .quests import QuestError, QuestService
 from .recommendations import RecommendationEngine
 from .repository import DatasetRepository
-from .runtime_state import RuntimeState
+from .runtime_state import ProfileImportError, RuntimeState
 
 
 repository = DatasetRepository()
@@ -69,3 +69,11 @@ def complete_activity(employee_id: str, event_id: str) -> dict:
 @app.post("/demo/reset")
 def reset_demo() -> dict:
     return runtime_state.reset()
+
+
+@app.post("/demo/import-profile")
+def import_profile(payload: dict) -> dict:
+    try:
+        return runtime_state.import_profile(payload)
+    except ProfileImportError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=str(exc)) from exc

@@ -15,10 +15,12 @@ export async function request(path: string, options?: RequestInit): Promise<unkn
     throw new ApiError('Backend is unavailable. Check the API URL and that the server is running.', 'unavailable');
   }
   if (!response.ok) {
+    const body = await response.json().catch(() => null) as { detail?: unknown } | null;
+    const detail = typeof body?.detail === 'string' ? body.detail : undefined;
     if (response.status >= 500) throw new ApiError(`Backend is unavailable or returned a server error (${response.status}).`, 'unavailable', response.status);
-    throw new ApiError(`API request failed (${response.status}).`, 'http', response.status);
+    throw new ApiError(detail ?? `API request failed (${response.status}).`, 'http', response.status);
   }
-  if (options?.method === 'POST' || response.status === 204) return undefined;
+  if (response.status === 204) return undefined;
   const body = await response.text();
   if (!body) return undefined;
   try {
@@ -44,4 +46,16 @@ export async function completeActivity(employeeId: string, eventId: string): Pro
   await request(`/employees/${id(employeeId)}/activities/${id(eventId)}/complete`, {
     method: 'POST'
   });
+}
+
+export async function importProfile(payload: unknown): Promise<{ employee_id: string }> {
+  const result = await request('/demo/import-profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!result || typeof result !== 'object' || typeof (result as { employee_id?: unknown }).employee_id !== 'string') {
+    throw new ApiError('Import response is missing employee_id.', 'invalid');
+  }
+  return result as { employee_id: string };
 }
