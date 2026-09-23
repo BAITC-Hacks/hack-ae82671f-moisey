@@ -188,8 +188,14 @@ class RecommendationEngine:
         return {
             "event_id": event_id,
             "event_name": event["title"],
+            "type": event["type"],
+            "format": event["format"],
             "score": score,
             "target_skills": list(useful_gain),
+            "skill_names": {
+                skill_id: self.repository.skills[skill_id]["name"]
+                for skill_id in useful_gain
+            },
             "skill_gaps": {skill_id: gaps[skill_id] for skill_id in useful_gain},
             "expected_gain": candidate["expected_gain"],
             "score_breakdown": breakdown,
