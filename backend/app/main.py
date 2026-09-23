@@ -2,10 +2,12 @@
 
 from fastapi import FastAPI, HTTPException
 
+from .recommendations import RecommendationEngine
 from .repository import DatasetRepository
 
 
 repository = DatasetRepository()
+recommendation_engine = RecommendationEngine(repository)
 app = FastAPI(title="Career Quest Data API")
 
 
@@ -32,3 +34,10 @@ def get_career(employee_id: str) -> dict:
     if repository.get_employee(employee_id) is None:
         raise HTTPException(status_code=404, detail="Employee not found")
     return repository.get_career(employee_id)
+
+
+@app.get("/employees/{employee_id}/recommendations")
+def get_recommendations(employee_id: str) -> dict:
+    if repository.get_employee(employee_id) is None:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return recommendation_engine.recommend(employee_id)
